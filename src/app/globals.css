@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[#F8FAFC] text-slate-900 dark:bg-[#060913] dark:text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200;
+  }
+}
+
+/* Higgsfield-inspired Spatial Ambient Mesh Background */
+.spatial-mesh-dark {
+  background-color: #060913;
+  background-image:
+    radial-gradient(at 14% 12%, rgba(13, 148, 136, 0.2) 0px, transparent 48%),
+    radial-gradient(at 86% 10%, rgba(6, 182, 212, 0.16) 0px, transparent 45%),
+    radial-gradient(at 52% 92%, rgba(16, 185, 129, 0.12) 0px, transparent 50%);
+}
+
+.spatial-mesh-light {
+  background-color: #f8fafc;
+  background-image:
+    radial-gradient(at 10% 10%, rgba(13, 148, 136, 0.12) 0px, transparent 45%),
+    radial-gradient(at 88% 12%, rgba(6, 182, 212, 0.12) 0px, transparent 42%),
+    radial-gradient(at 50% 90%, rgba(16, 185, 129, 0.08) 0px, transparent 48%);
+}
+
+/* Spatial 3D Glass Card */
+.glass-card {
+  @apply relative rounded-2xl border border-slate-200/80 bg-white/75 backdrop-blur-xl shadow-sm transition-all duration-300 dark:border-white/10 dark:bg-slate-900/55 dark:shadow-[0_12px_40px_-16px_rgba(0,0,0,0.75)];
+}
+
+.glass-card-hover {
+  transform-style: preserve-3d;
+}
+
+.glass-card-hover:hover {
+  @apply border-cyan-500/40 dark:border-cyan-400/35 shadow-glow-cyan;
+  transform: perspective(1000px) translateY(-3px) rotateX(1.2deg);
+}
+
+/* Subtle Grid Texture Overlay */
+.spatial-grid {
+  background-size: 36px 36px;
+  background-image: linear-gradient(
+      to right,
+      rgba(148, 163, 184, 0.07) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(148, 163, 184, 0.07) 1px,
+      transparent 1px
+    );
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.5);
+}
