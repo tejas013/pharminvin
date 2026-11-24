@@ -404,7 +404,7 @@ export default function PharminvinApp() {
 
       <div className="relative z-10 flex min-h-screen flex-col lg:flex-row">
         {/* Spatial Glass Sidebar */}
-        <aside className="w-full lg:w-70 shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-white/[0.08] bg-white/75 dark:bg-[#040914]/80 backdrop-blur-2xl p-4 sm:p-5 flex flex-col justify-between">
+        <aside className="w-full lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-white/[0.08] bg-white/75 dark:bg-[#040914]/80 backdrop-blur-2xl p-4 sm:p-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
               <BrandLogo size={40} />
