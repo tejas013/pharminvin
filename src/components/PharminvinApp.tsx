@@ -38,6 +38,7 @@ import {
 } from "@/lib/seedData";
 import BrandLogo from "./BrandLogo";
 import AuthPortal from "./AuthPortal";
+import CyberBackground from "./CyberBackground";
 import CommandCenter from "./CommandCenter";
 import InventoryEngine from "./InventoryEngine";
 import SmartStorageMonitor from "./SmartStorageMonitor";
@@ -64,7 +65,6 @@ export default function PharminvinApp() {
     getInitialPrescriptions
   );
 
-  // Live Telemetry Clock
   useEffect(() => {
     const updateClock = () => {
       setClock(
@@ -81,7 +81,6 @@ export default function PharminvinApp() {
     return () => clearInterval(timer);
   }, []);
 
-  // Global Ctrl+K / Cmd+K Command Palette Shortcut
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -95,7 +94,6 @@ export default function PharminvinApp() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  // Hydrate persisted LocalStorage state + API sync
   useEffect(() => {
     try {
       const saved = localStorage.getItem(LS_KEY);
@@ -401,18 +399,20 @@ export default function PharminvinApp() {
         isDark ? "spatial-mesh-dark" : "spatial-mesh-light"
       }`}
     >
-      <div className="pointer-events-none fixed inset-0 spatial-grid opacity-55" />
-      <div className="pointer-events-none fixed inset-0 cinema-noise" />
+      {/* Live Architectural Neural Spline & Refracted Glass Background */}
+      <CyberBackground isDark={isDark} variant="workspace" />
 
       <div className="relative z-10 flex min-h-screen flex-col lg:flex-row">
         {/* Spatial Glass Sidebar */}
-        <aside className="w-full lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-white/[0.08] bg-white/75 dark:bg-[#050A15]/80 backdrop-blur-2xl p-4 sm:p-5 flex flex-col justify-between">
+        <aside className="w-full lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-white/[0.08] bg-white/75 dark:bg-[#040914]/78 backdrop-blur-2xl p-4 sm:p-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
               <BrandLogo size={40} />
             </div>
 
-            <nav className="mt-6 flex lg:flex-col gap-1.5 overflow-x-auto pb-2 lg:pb-0">
+            <div className="fiber-divider my-5" />
+
+            <nav className="flex lg:flex-col gap-1.5 overflow-x-auto pb-2 lg:pb-0">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const active = activeTab === item.id;
@@ -422,7 +422,7 @@ export default function PharminvinApp() {
                     onClick={() => setActiveTab(item.id)}
                     className={`relative flex shrink-0 items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition ${
                       active
-                        ? "bg-gradient-to-r from-teal-500/95 via-cyan-500/95 to-emerald-500/90 text-slate-950 shadow-glow-cyan"
+                        ? "bg-gradient-to-r from-teal-400 via-cyan-400 to-emerald-400 text-slate-950 shadow-glow-cyan"
                         : "text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/[0.06]"
                     }`}
                   >
@@ -441,11 +441,10 @@ export default function PharminvinApp() {
             </nav>
           </div>
 
-          {/* Bottom User & Encrypted Sync Status */}
           <div className="hidden lg:block space-y-3 pt-6 border-t border-slate-200/80 dark:border-white/[0.08]">
             <div className="rounded-xl border border-slate-200/80 dark:border-white/[0.08] bg-slate-100/80 dark:bg-white/[0.03] p-3.5 text-xs">
               <div className="flex items-center gap-2 text-slate-900 dark:text-white font-semibold">
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500/15 text-cyan-500">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500/15 text-cyan-400">
                   <User className="h-4 w-4" />
                 </span>
                 <span className="truncate">{user.fullName}</span>
@@ -474,7 +473,6 @@ export default function PharminvinApp() {
 
         {/* Main Workspace Canvas */}
         <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
-          {/* Top Utility Command Header */}
           <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-teal-600 dark:text-cyan-400">
@@ -489,7 +487,6 @@ export default function PharminvinApp() {
             </div>
 
             <div className="flex items-center gap-2.5">
-              {/* Command Palette Trigger */}
               {user.role === "admin" && (
                 <button
                   onClick={() => setCmdOpen(true)}
@@ -541,7 +538,6 @@ export default function PharminvinApp() {
             </div>
           </header>
 
-          {/* Smooth Animated Module Transitions */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -607,7 +603,7 @@ export default function PharminvinApp() {
         </main>
       </div>
 
-      {/* Linear/Raycast Style Ctrl+K Spatial Command Palette */}
+      {/* Ctrl+K Spatial Command Palette */}
       {cmdOpen && (
         <div
           onClick={() => setCmdOpen(false)}
@@ -687,7 +683,7 @@ export default function PharminvinApp() {
                           {b.batchId} · {b.shelfZoneLabel}
                         </div>
                       </div>
-                      <span className="font-bold text-cyan-500">
+                      <span className="font-bold text-cyan-400">
                         {b.quantity} units
                       </span>
                     </button>
@@ -699,7 +695,6 @@ export default function PharminvinApp() {
         </div>
       )}
 
-      {/* Spatial Glass Toast Notification */}
       {toast && (
         <div className="fixed bottom-5 right-5 z-50 rounded-xl border border-cyan-400/40 bg-[#050C1B]/95 px-4 py-3 text-xs font-semibold text-cyan-200 shadow-glow-cyan backdrop-blur-xl">
           {toast}
