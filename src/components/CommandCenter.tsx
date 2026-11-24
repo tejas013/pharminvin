@@ -17,6 +17,7 @@ import {
 import { InventoryBatch, RestockOrder, StorageZone } from "@/types/pharminvin";
 import Spatial3DVisualizer from "./Spatial3DVisualizer";
 import SpatialCard from "./SpatialCard";
+import IsometricPipeline from "./IsometricPipeline";
 
 interface CommandCenterProps {
   batches: InventoryBatch[];
@@ -123,19 +124,19 @@ export default function CommandCenter({
 
   return (
     <div className="space-y-6">
-      {/* Executive Spatial Hero Strip */}
-      <div className="glass-card p-5 sm:p-6 overflow-hidden">
-        <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-cyan-500/15 blur-3xl" />
+      {/* Executive Cyber-Architectural Hero Strip */}
+      <div className="glass-card mat-carbon p-5 sm:p-6 overflow-hidden">
+        <div className="pointer-events-none absolute -right-12 -top-12 h-52 w-52 rounded-full bg-cyan-500/20 blur-3xl" />
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-[11px] font-semibold text-teal-700 dark:text-cyan-300">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/35 bg-cyan-500/15 px-3 py-1 text-[11px] font-semibold text-cyan-200">
               <Sparkles className="h-3 w-3" />
               Autonomous Pharmacy Intelligence Active
             </div>
-            <h2 className="mt-2 font-display text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            <h2 className="mt-2 font-display text-xl sm:text-2xl font-bold text-white">
               Real-Time Inventory, Cryo-Vault &amp; FEFO Operations
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-300/80 mt-0.5">
               Zero-waste expiry tracking synced across {activeBatches.length}{" "}
               active batches and {zones.length} IoT thermal chambers.
             </p>
@@ -144,14 +145,14 @@ export default function CommandCenter({
           <div className="flex flex-wrap items-center gap-2.5">
             <button
               onClick={() => onNavigate("storage")}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/35 bg-rose-500/10 px-3.5 py-2 text-xs font-semibold text-rose-600 dark:text-rose-300 hover:bg-rose-500/20 transition"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/40 bg-rose-500/15 px-3.5 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/25 transition"
             >
               <Thermometer className="h-3.5 w-3.5" />
               Test IoT Breach
             </button>
             <button
               onClick={() => onNavigate("suppliers")}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 px-4 py-2 text-xs font-bold text-slate-950 shadow-glow-cyan hover:brightness-110 transition"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 text-xs font-bold text-slate-950 shadow-glow-cyan hover:brightness-110 transition"
             >
               <Zap className="h-3.5 w-3.5" />
               1-Click Smart Restock
@@ -195,7 +196,6 @@ export default function CommandCenter({
                     </div>
                   </div>
 
-                  {/* Mini Telemetry Spark-Bars */}
                   <div className="flex items-end gap-1 h-8">
                     {kpi.bars.map((height, bIdx) => (
                       <span
@@ -216,14 +216,27 @@ export default function CommandCenter({
         })}
       </div>
 
-      {/* Main Spatial Split: 3D Volumetric Twin + Live Action Feeds */}
+      {/* Glowing Fiber-Optic Section Divider */}
+      <div className="fiber-divider" />
+
+      {/* 3D Isometric System Architecture + Floating Cryo-Pod Hardware Showcase */}
+      <IsometricPipeline
+        batches={batches}
+        zones={zones}
+        orders={orders}
+        onNavigate={onNavigate}
+      />
+
+      {/* Glowing Fiber-Optic Section Divider */}
+      <div className="fiber-divider" />
+
+      {/* Main Spatial Split: Volumetric 3D Molecular Twin + Live Action Feeds */}
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
         <div className="xl:col-span-7">
           <Spatial3DVisualizer batches={batches} zones={zones} />
         </div>
 
         <div className="xl:col-span-5 space-y-6">
-          {/* Immediate FEFO Priority Spotlight */}
           <SpatialCard className="p-5" tiltStrength={3}>
             <div className="flex items-center justify-between mb-3.5">
               <div className="flex items-center gap-2">
@@ -278,7 +291,6 @@ export default function CommandCenter({
             </div>
           </SpatialCard>
 
-          {/* Live Cold-Chain & Procurement Snapshot */}
           <SpatialCard className="p-5" tiltStrength={3}>
             <div className="flex items-center justify-between mb-3.5">
               <div className="flex items-center gap-2">
