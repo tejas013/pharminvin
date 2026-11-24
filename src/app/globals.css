@@ -8,45 +8,45 @@
   }
 
   body {
-    @apply bg-[#F4F7FB] text-slate-900 dark:bg-[#03060E] dark:text-slate-100 antialiased selection:bg-cyan-400/30 selection:text-cyan-100;
+    @apply bg-[#F1F5F9] text-slate-900 dark:bg-[#02050B] dark:text-slate-100 antialiased selection:bg-cyan-400/30 selection:text-cyan-100;
   }
 }
 
-/* Studio-Grade Volumetric Aurora Mesh */
+/* Studio Volumetric Base */
 .spatial-mesh-dark {
-  background-color: #03060e;
+  background-color: #02050b;
   background-image:
-    radial-gradient(ellipse 65% 45% at 15% 0%, rgba(6, 182, 212, 0.22) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 45% at 88% 8%, rgba(13, 148, 136, 0.2) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 50% at 50% 100%, rgba(16, 185, 129, 0.14) 0%, transparent 65%);
+    radial-gradient(ellipse 70% 50% at 15% -5%, rgba(6, 182, 212, 0.2) 0%, transparent 62%),
+    radial-gradient(ellipse 60% 45% at 88% 5%, rgba(13, 148, 136, 0.18) 0%, transparent 58%),
+    radial-gradient(ellipse 55% 45% at 50% 105%, rgba(16, 185, 129, 0.12) 0%, transparent 65%);
 }
 
 .spatial-mesh-light {
-  background-color: #f4f7fb;
+  background-color: #f1f5f9;
   background-image:
-    radial-gradient(ellipse 60% 45% at 12% 0%, rgba(6, 182, 212, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 65% 45% at 12% 0%, rgba(6, 182, 212, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 55% 45% at 90% 10%, rgba(13, 148, 136, 0.12) 0%, transparent 55%),
     radial-gradient(ellipse 50% 50% at 50% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
 }
 
-/* Ultra-Subtle Cinema Grain Texture */
+/* Cinema Micro-Grain */
 .cinema-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
 }
 
-/* Spatial Beveled Glassmorphism (Automatically upgrades all existing panels) */
+/* Core Spatial Frosted Glass */
 .glass-card {
-  @apply relative rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-2xl transition-all duration-300 dark:border-white/[0.09] dark:bg-[#080F1E]/70;
+  @apply relative rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-2xl transition-all duration-300 dark:border-white/[0.1] dark:bg-[#070E1C]/68;
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
-    0 12px 32px -12px rgba(15, 23, 42, 0.08);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.55),
+    0 14px 36px -14px rgba(15, 23, 42, 0.09);
 }
 
 .dark .glass-card {
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.11),
-    inset 0 0 0 1px rgba(6, 182, 212, 0.04),
-    0 20px 50px -20px rgba(0, 0, 0, 0.85);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.13),
+    inset 0 0 24px 0 rgba(6, 182, 212, 0.03),
+    0 24px 54px -22px rgba(0, 0, 0, 0.9);
 }
 
 .glass-card-hover {
@@ -54,14 +54,129 @@
 }
 
 .glass-card-hover:hover {
-  @apply border-cyan-500/45 dark:border-cyan-400/40;
+  @apply border-cyan-500/45 dark:border-cyan-400/45;
   box-shadow:
-    inset 0 1px 0 0 rgba(103, 232, 249, 0.25),
-    0 0 36px -10px rgba(6, 182, 212, 0.35),
-    0 24px 48px -20px rgba(0, 0, 0, 0.7);
+    inset 0 1px 0 0 rgba(103, 232, 249, 0.28),
+    0 0 40px -10px rgba(6, 182, 212, 0.35),
+    0 26px 52px -20px rgba(0, 0, 0, 0.78);
 }
 
-/* Animated Conic Laser Border for Hero Monolith Cards */
+/* ============================================================
+   MATERIAL & TEXTURE SWATCHES
+   ============================================================ */
+
+/* 1. Brushed Titanium Surface */
+.mat-titanium {
+  background-image:
+    repeating-linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.035) 0px,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    linear-gradient(135deg, rgba(148, 163, 184, 0.22), rgba(15, 23, 42, 0.85) 55%, rgba(100, 116, 139, 0.18));
+  border-color: rgba(203, 213, 225, 0.25) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.9),
+    0 20px 50px -20px rgba(0, 0, 0, 0.85);
+}
+
+/* 2. Woven Carbon Fiber Surface */
+.mat-carbon {
+  background-color: #070b14;
+  background-image:
+    linear-gradient(27deg, #0d1526 5px, transparent 5px),
+    linear-gradient(207deg, #0d1526 5px, transparent 5px),
+    linear-gradient(27deg, #111c33 5px, transparent 5px),
+    linear-gradient(207deg, #111c33 5px, transparent 5px),
+    linear-gradient(90deg, #090f1d 10px, transparent 10px),
+    linear-gradient(#0b1222 25%, #070c17 25%, #070c17 50%, transparent 50%, transparent 75%, #0f192d 75%, #0f192d);
+  background-size: 16px 16px;
+  background-position: 0 4px, 8px 0, 0 12px, 8px 8px, 0 0, 0 0;
+  border-color: rgba(6, 182, 212, 0.28) !important;
+}
+
+/* 3. Liquid Chrome Iridescent Surface */
+.mat-chrome {
+  background-image:
+    linear-gradient(
+      125deg,
+      rgba(226, 232, 240, 0.22) 0%,
+      rgba(6, 182, 212, 0.16) 24%,
+      rgba(15, 23, 42, 0.85) 52%,
+      rgba(167, 139, 250, 0.18) 76%,
+      rgba(103, 232, 249, 0.25) 100%
+    );
+  border-color: rgba(165, 243, 252, 0.35) !important;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    0 0 38px -12px rgba(6, 182, 212, 0.45);
+}
+
+/* 4. Glowing Fiber-Optic Section Divider */
+@keyframes fiberPulse {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(420%);
+  }
+}
+
+.fiber-divider {
+  position: relative;
+  height: 1px;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(6, 182, 212, 0.35) 25%,
+    rgba(16, 185, 129, 0.5) 50%,
+    rgba(6, 182, 212, 0.35) 75%,
+    transparent 100%
+  );
+}
+
+.fiber-divider::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 28%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #67e8f9,
+    #ffffff,
+    #34d399,
+    transparent
+  );
+  box-shadow: 0 0 14px 2px rgba(6, 182, 212, 0.85);
+  animation: fiberPulse 3.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* 5. Refracted Glass Prism Floating Shape */
+.prism-refract {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(6, 182, 212, 0.08) 38%,
+    rgba(168, 85, 247, 0.06) 68%,
+    rgba(16, 185, 129, 0.12) 100%
+  );
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.35),
+    inset -1px -1px 0 rgba(6, 182, 212, 0.2),
+    0 24px 60px -20px rgba(0, 0, 0, 0.7);
+}
+
+/* Animated Conic Laser Border */
 @property --beam-angle {
   syntax: "<angle>";
   initial-value: 0deg;
@@ -87,9 +202,10 @@
   background: conic-gradient(
     from var(--beam-angle),
     transparent 0deg,
-    rgba(6, 182, 212, 0.85) 55deg,
-    rgba(16, 185, 129, 0.7) 100deg,
-    transparent 165deg,
+    rgba(6, 182, 212, 0.9) 52deg,
+    rgba(16, 185, 129, 0.75) 95deg,
+    rgba(168, 85, 247, 0.45) 130deg,
+    transparent 175deg,
     transparent 360deg
   );
   -webkit-mask:
@@ -98,15 +214,26 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  animation: spinBeam 6s linear infinite;
+  animation: spinBeam 6.5s linear infinite;
 }
 
-/* Spatial Coordinate Grid */
+/* Perspective Architectural Wireframe Floor */
+.cyber-floor-grid {
+  background-size: 56px 56px;
+  background-image:
+    linear-gradient(to right, rgba(6, 182, 212, 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(6, 182, 212, 0.18) 1px, transparent 1px);
+  transform: perspective(680px) rotateX(68deg);
+  transform-origin: center top;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), transparent 85%);
+}
+
+/* Subtle Coordinate Grid */
 .spatial-grid {
   background-size: 42px 42px;
   background-image:
-    linear-gradient(to right, rgba(148, 163, 184, 0.07) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+    linear-gradient(to right, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
 }
 
 /* Sweeping Scanner Line */
@@ -116,10 +243,10 @@
     opacity: 0;
   }
   20% {
-    opacity: 0.7;
+    opacity: 0.75;
   }
   80% {
-    opacity: 0.7;
+    opacity: 0.75;
   }
   100% {
     transform: translateY(420%);
@@ -129,6 +256,20 @@
 
 .scanline-beam {
   animation: scanSweep 5.5s ease-in-out infinite;
+}
+
+/* Slow Floating Prism Drift */
+@keyframes driftSlow {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(12deg);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0) rotate(18deg);
+  }
+}
+
+.animate-drift {
+  animation: driftSlow 9s ease-in-out infinite;
 }
 
 /* Custom Ultra-Thin Scrollbar */
@@ -147,5 +288,5 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(6, 182, 212, 0.6);
+  background: rgba(6, 182, 212, 0.65);
 }
