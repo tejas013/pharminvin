@@ -1,15 +1,19 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
   BarChart3,
+  Command,
   Database,
+  Flame,
   LayoutDashboard,
   LogOut,
   Moon,
   Package,
   QrCode,
+  Search,
   ShieldAlert,
   Sun,
   Thermometer,
@@ -48,6 +52,9 @@ export default function PharminvinApp() {
   const [isDark, setIsDark] = useState(true);
   const [activeTab, setActiveTab] = useState("command");
   const [toast, setToast] = useState<string | null>(null);
+  const [cmdOpen, setCmdOpen] = useState(false);
+  const [cmdQuery, setCmdQuery] = useState("");
+  const [clock, setClock] = useState("");
 
   const [batches, setBatches] = useState<InventoryBatch[]>(getInitialInventory);
   const [zones, setZones] = useState<StorageZone[]>(getInitialStorageZones);
@@ -57,7 +64,38 @@ export default function PharminvinApp() {
     getInitialPrescriptions
   );
 
-  // Hydrate theme + persisted LocalStorage state + live API sync
+  // Live Telemetry Clock
+  useEffect(() => {
+    const updateClock = () => {
+      setClock(
+        new Date().toLocaleTimeString("en-IN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        })
+      );
+    };
+    updateClock();
+    const timer = setInterval(updateClock, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Global Ctrl+K / Cmd+K Command Palette Shortcut
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setCmdOpen((open) => !open);
+      } else if (e.key === "Escape") {
+        setCmdOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  // Hydrate persisted LocalStorage state + API sync
   useEffect(() => {
     try {
       const saved = localStorage.getItem(LS_KEY);
@@ -73,7 +111,6 @@ export default function PharminvinApp() {
       // Ignore storage parse issues
     }
 
-    // Pull initial suppliers/inventory from Next.js API routes
     Promise.all([
       fetch("/api/inventory").then((r) => r.json()).catch(() => null),
       fetch("/api/orders").then((r) => r.json()).catch(() => null),
@@ -87,7 +124,6 @@ export default function PharminvinApp() {
     });
   }, []);
 
-  // Persist live state to LocalStorage for zero-config instant durability
   useEffect(() => {
     try {
       localStorage.setItem(
@@ -99,7 +135,6 @@ export default function PharminvinApp() {
     }
   }, [user, batches, zones, orders, prescriptions]);
 
-  // Sync Tailwind dark class
   useEffect(() => {
     const root = document.documentElement;
     if (isDark) root.classList.add("dark");
@@ -119,10 +154,13 @@ export default function PharminvinApp() {
 
   const handleLogout = () => {
     setUser(null);
+    setCmdOpen(false);
     notify("Signed out of Pharminvin");
   };
 
-  const handleAddBatch = async (newBatchData: Omit<InventoryBatch, "id" | "status">) => {
+  const handleAddBatch = async (
+    newBatchData: Omit<InventoryBatch, "id" | "status">
+  ) => {
     try {
       const res = await fetch("/api/inventory", {
         method: "POST",
@@ -213,10 +251,15 @@ export default function PharminvinApp() {
               currentTemp: spikedTemp,
               humidity: Math.min(89, z.maxHumidity + 18),
               status: "breach",
-              breachReason: "Thermal excursion detected. Immediate inspection required.",
+              breachReason:
+                "Thermal excursion detected. Immediate inspection required.",
               telemetry: [
                 ...z.telemetry.slice(-8),
-                { time: nowLabel, temp: spikedTemp, humidity: z.maxHumidity + 18 },
+                {
+                  time: nowLabel,
+                  temp: spikedTemp,
+                  humidity: z.maxHumidity + 18,
+                },
               ],
             };
           }
@@ -258,7 +301,9 @@ export default function PharminvinApp() {
     if (res && res.ok) {
       const data = await res.json();
       setOrders((prev) => [data.order, ...prev]);
-      notify(`Smart PO ${data.order.orderCode} dispatched to ${payload.supplierName}.`);
+      notify(
+        `Smart PO ${data.order.orderCode} dispatched to ${payload.supplierName}.`
+      );
     }
   };
 
@@ -311,6 +356,19 @@ export default function PharminvinApp() {
     }).catch(() => null);
   };
 
+  const matchedBatches = useMemo(() => {
+    if (!cmdQuery.trim()) return batches.slice(0, 3);
+    const q = cmdQuery.toLowerCase();
+    return batches
+      .filter(
+        (b) =>
+          b.name.toLowerCase().includes(q) ||
+          b.batchId.toLowerCase().includes(q) ||
+          b.genericName.toLowerCase().includes(q)
+      )
+      .slice(0, 4);
+  }, [batches, cmdQuery]);
+
   if (!user) {
     return (
       <AuthPortal
@@ -339,16 +397,19 @@ export default function PharminvinApp() {
 
   return (
     <div
-      className={`min-h-screen w-full ${
+      className={`min-h-screen w-full relative ${
         isDark ? "spatial-mesh-dark" : "spatial-mesh-light"
       }`}
     >
-      <div className="flex min-h-screen flex-col lg:flex-row">
+      <div className="pointer-events-none fixed inset-0 spatial-grid opacity-55" />
+      <div className="pointer-events-none fixed inset-0 cinema-noise" />
+
+      <div className="relative z-10 flex min-h-screen flex-col lg:flex-row">
         {/* Spatial Glass Sidebar */}
-        <aside className="w-full lg:w-68 xl:w-72 shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-white/10 bg-white/75 dark:bg-slate-950/65 backdrop-blur-xl p-4 sm:p-5 flex flex-col justify-between">
+        <aside className="w-full lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-white/[0.08] bg-white/75 dark:bg-[#050A15]/80 backdrop-blur-2xl p-4 sm:p-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
-              <BrandLogo size={38} />
+              <BrandLogo size={40} />
             </div>
 
             <nav className="mt-6 flex lg:flex-col gap-1.5 overflow-x-auto pb-2 lg:pb-0">
@@ -359,10 +420,10 @@ export default function PharminvinApp() {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`flex shrink-0 items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition ${
+                    className={`relative flex shrink-0 items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition ${
                       active
-                        ? "bg-gradient-to-r from-teal-600/90 to-cyan-600/90 text-white shadow-glow-teal"
-                        : "text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/5"
+                        ? "bg-gradient-to-r from-teal-500/95 via-cyan-500/95 to-emerald-500/90 text-slate-950 shadow-glow-cyan"
+                        : "text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/[0.06]"
                     }`}
                   >
                     <span className="flex items-center gap-2.5">
@@ -370,7 +431,7 @@ export default function PharminvinApp() {
                       {item.label}
                     </span>
                     {item.id === "storage" && activeBreachCount > 0 && (
-                      <span className="rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-bold text-white animate-pulse">
+                      <span className="rounded-full bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold text-white animate-pulse">
                         {activeBreachCount}
                       </span>
                     )}
@@ -380,25 +441,30 @@ export default function PharminvinApp() {
             </nav>
           </div>
 
-          {/* Bottom User & System Status */}
-          <div className="hidden lg:block space-y-3 pt-6 border-t border-slate-200/80 dark:border-white/10">
-            <div className="rounded-xl bg-slate-100/80 dark:bg-white/[0.04] p-3 text-xs">
+          {/* Bottom User & Encrypted Sync Status */}
+          <div className="hidden lg:block space-y-3 pt-6 border-t border-slate-200/80 dark:border-white/[0.08]">
+            <div className="rounded-xl border border-slate-200/80 dark:border-white/[0.08] bg-slate-100/80 dark:bg-white/[0.03] p-3.5 text-xs">
               <div className="flex items-center gap-2 text-slate-900 dark:text-white font-semibold">
-                <User className="h-4 w-4 text-cyan-500" />
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500/15 text-cyan-500">
+                  <User className="h-4 w-4" />
+                </span>
                 <span className="truncate">{user.fullName}</span>
               </div>
-              <div className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
+              <div className="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
                 {user.facility}
               </div>
-              <div className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                <Database className="h-3 w-3" />
-                API + Local Sync Live
+              <div className="mt-2.5 flex items-center justify-between text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
+                <span className="inline-flex items-center gap-1">
+                  <Database className="h-3 w-3" />
+                  SYNC ACTIVE
+                </span>
+                <span className="text-slate-400">{clock} IST</span>
               </div>
             </div>
 
             <button
               onClick={handleLogout}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 dark:border-white/15 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:border-rose-400 hover:text-rose-500 transition"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 dark:border-white/15 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:border-rose-400 hover:text-rose-400 transition"
             >
               <LogOut className="h-3.5 w-3.5" />
               Switch Role / Sign Out
@@ -408,25 +474,39 @@ export default function PharminvinApp() {
 
         {/* Main Workspace Canvas */}
         <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
-          {/* Top Utility Header */}
+          {/* Top Utility Command Header */}
           <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-teal-600 dark:text-cyan-400">
+              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-teal-600 dark:text-cyan-400">
                 <Activity className="h-3.5 w-3.5" />
                 {user.role === "admin"
-                  ? "Pharminvin Spatial Command Center"
+                  ? "Pharminvin Spatial Command OS"
                   : "Patient Care & Adherence Hub"}
               </div>
-              <h1 className="font-display text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-0.5 tracking-tight">
                 {navItems.find((n) => n.id === activeTab)?.label}
               </h1>
             </div>
 
             <div className="flex items-center gap-2.5">
+              {/* Command Palette Trigger */}
+              {user.role === "admin" && (
+                <button
+                  onClick={() => setCmdOpen(true)}
+                  className="glass-card hidden md:inline-flex items-center gap-2.5 px-3.5 py-2 text-xs text-slate-500 dark:text-slate-300 hover:border-cyan-400/50"
+                >
+                  <Search className="h-3.5 w-3.5 text-cyan-400" />
+                  <span>Quick Command or Search SKU...</span>
+                  <kbd className="inline-flex items-center gap-0.5 rounded-md border border-slate-300 dark:border-white/15 bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 font-mono text-[10px] font-semibold">
+                    <Command className="h-2.5 w-2.5" />K
+                  </kbd>
+                </button>
+              )}
+
               {activeBreachCount > 0 && user.role === "admin" && (
                 <button
                   onClick={() => setActiveTab("storage")}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-3 py-2 text-xs font-semibold text-white animate-pulse shadow-glow-crimson"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-bold text-white animate-pulse shadow-glow-crimson"
                 >
                   <ShieldAlert className="h-4 w-4" />
                   Cold-Chain Alert ({activeBreachCount})
@@ -435,7 +515,7 @@ export default function PharminvinApp() {
 
               <button
                 onClick={() => setIsDark((d) => !d)}
-                className="glass-card flex items-center gap-1.5 px-3 py-2 text-xs font-semibold"
+                className="glass-card flex items-center gap-1.5 px-3 py-2 text-xs font-semibold hover:border-cyan-400/50"
                 title="Toggle Dark / Light Mode"
               >
                 {isDark ? (
@@ -461,63 +541,167 @@ export default function PharminvinApp() {
             </div>
           </header>
 
-          {/* Active Module Router */}
-          {activeTab === "command" && user.role === "admin" && (
-            <CommandCenter
-              batches={batches}
-              zones={zones}
-              orders={orders}
-              onNavigate={setActiveTab}
-            />
-          )}
+          {/* Smooth Animated Module Transitions */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.22 }}
+            >
+              {activeTab === "command" && user.role === "admin" && (
+                <CommandCenter
+                  batches={batches}
+                  zones={zones}
+                  orders={orders}
+                  onNavigate={setActiveTab}
+                />
+              )}
 
-          {activeTab === "inventory" && user.role === "admin" && (
-            <InventoryEngine
-              batches={batches}
-              zones={zones}
-              onAddBatch={handleAddBatch}
-              onBatchAction={handleBatchAction}
-            />
-          )}
+              {activeTab === "inventory" && user.role === "admin" && (
+                <InventoryEngine
+                  batches={batches}
+                  zones={zones}
+                  onAddBatch={handleAddBatch}
+                  onBatchAction={handleBatchAction}
+                />
+              )}
 
-          {activeTab === "storage" && user.role === "admin" && (
-            <SmartStorageMonitor
-              zones={zones}
-              batches={batches}
-              onZoneAction={handleZoneAction}
-            />
-          )}
+              {activeTab === "storage" && user.role === "admin" && (
+                <SmartStorageMonitor
+                  zones={zones}
+                  batches={batches}
+                  onZoneAction={handleZoneAction}
+                />
+              )}
 
-          {activeTab === "suppliers" && user.role === "admin" && (
-            <SupplierOptimizer
-              suppliers={suppliers}
-              batches={batches}
-              orders={orders}
-              onCreateOrder={handleCreateOrder}
-              onAdvanceOrder={handleAdvanceOrder}
-            />
-          )}
+              {activeTab === "suppliers" && user.role === "admin" && (
+                <SupplierOptimizer
+                  suppliers={suppliers}
+                  batches={batches}
+                  orders={orders}
+                  onCreateOrder={handleCreateOrder}
+                  onAdvanceOrder={handleAdvanceOrder}
+                />
+              )}
 
-          {activeTab === "analytics" && user.role === "admin" && (
-            <MarketAnalytics
-              batches={batches}
-              onQuickRestock={(id) => handleBatchAction(id, "restock", 100)}
-            />
-          )}
+              {activeTab === "analytics" && user.role === "admin" && (
+                <MarketAnalytics
+                  batches={batches}
+                  onQuickRestock={(id) =>
+                    handleBatchAction(id, "restock", 100)
+                  }
+                />
+              )}
 
-          {activeTab === "patient" && (
-            <PatientPortal
-              prescriptions={prescriptions}
-              onToggleDosage={handleToggleDosage}
-              isAdminPreview={user.role === "admin"}
-            />
-          )}
+              {activeTab === "patient" && (
+                <PatientPortal
+                  prescriptions={prescriptions}
+                  onToggleDosage={handleToggleDosage}
+                  isAdminPreview={user.role === "admin"}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
 
-      {/* Spatial Toast Notification */}
+      {/* Linear/Raycast Style Ctrl+K Spatial Command Palette */}
+      {cmdOpen && (
+        <div
+          onClick={() => setCmdOpen(false)}
+          className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/70 backdrop-blur-md pt-20 p-4"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="glass-card holo-border w-full max-w-xl overflow-hidden"
+          >
+            <div className="flex items-center gap-3 border-b border-slate-200/80 dark:border-white/10 px-4 py-3.5">
+              <Search className="h-4 w-4 text-cyan-400" />
+              <input
+                autoFocus
+                value={cmdQuery}
+                onChange={(e) => setCmdQuery(e.target.value)}
+                placeholder="Jump to module, search medicine batch, or trigger simulation..."
+                className="w-full bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none"
+              />
+              <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-slate-400">
+                ESC
+              </kbd>
+            </div>
+
+            <div className="p-3 space-y-3 max-h-[380px] overflow-y-auto text-xs">
+              <div>
+                <div className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                  Instant Actions
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  <button
+                    onClick={() => {
+                      setActiveTab("storage");
+                      handleZoneAction("zone-cryo-a", "breach");
+                      setCmdOpen(false);
+                    }}
+                    className="flex items-center gap-2 rounded-xl px-3 py-2 text-left text-rose-500 dark:text-rose-300 hover:bg-rose-500/15 transition"
+                  >
+                    <Flame className="h-3.5 w-3.5" />
+                    Simulate Cryo-Fridge Breach
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsDark((d) => !d);
+                      setCmdOpen(false);
+                    }}
+                    className="flex items-center gap-2 rounded-xl px-3 py-2 text-left text-slate-700 dark:text-slate-200 hover:bg-cyan-500/15 transition"
+                  >
+                    {isDark ? (
+                      <Sun className="h-3.5 w-3.5 text-amber-300" />
+                    ) : (
+                      <Moon className="h-3.5 w-3.5 text-teal-600" />
+                    )}
+                    Toggle Spatial Dark / Light
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <div className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                  Matching Inventory Batches
+                </div>
+                <div className="space-y-1">
+                  {matchedBatches.map((b) => (
+                    <button
+                      key={b.id}
+                      onClick={() => {
+                        setActiveTab("inventory");
+                        setCmdOpen(false);
+                      }}
+                      className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-left hover:bg-cyan-500/15 transition"
+                    >
+                      <div>
+                        <div className="font-semibold text-slate-900 dark:text-white">
+                          {b.name}
+                        </div>
+                        <div className="text-[11px] font-mono text-slate-400">
+                          {b.batchId} · {b.shelfZoneLabel}
+                        </div>
+                      </div>
+                      <span className="font-bold text-cyan-500">
+                        {b.quantity} units
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Spatial Glass Toast Notification */}
       {toast && (
-        <div className="fixed bottom-5 right-5 z-50 rounded-xl border border-cyan-500/40 bg-slate-950/90 px-4 py-3 text-xs font-semibold text-cyan-200 shadow-glow-cyan backdrop-blur-xl">
+        <div className="fixed bottom-5 right-5 z-50 rounded-xl border border-cyan-400/40 bg-[#050C1B]/95 px-4 py-3 text-xs font-semibold text-cyan-200 shadow-glow-cyan backdrop-blur-xl">
           {toast}
         </div>
       )}
