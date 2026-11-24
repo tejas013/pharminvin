@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "patient";
+export type UserRole = "admin" | "doctor" | "patient";
 
 export interface AuthUser {
   id: string;
@@ -6,6 +6,13 @@ export interface AuthUser {
   fullName: string;
   role: UserRole;
   facility: string;
+  licenseId?: string;
+  age?: number;
+}
+
+export interface StoredAccount extends AuthUser {
+  password: string;
+  createdAt: string;
 }
 
 export type BatchStatus = "active" | "quarantined" | "depleted";
@@ -25,11 +32,11 @@ export interface InventoryBatch {
     | "Analgesics"
     | "Oncology"
     | "Respiratory";
-  manufactureDate: string; // YYYY-MM-DD
-  expiryDate: string; // YYYY-MM-DD
+  manufactureDate: string;
+  expiryDate: string;
   quantity: number;
   reorderPoint: number;
-  unitPrice: number; // INR
+  unitPrice: number;
   shelfZoneId: string;
   shelfZoneLabel: string;
   status: BatchStatus;
@@ -62,8 +69,8 @@ export interface Supplier {
   city: string;
   distanceKm: number;
   estDeliveryHours: number;
-  unitPriceMultiplier: number; // lower is better (e.g. 0.92 vs 1.08)
-  aiTrustScore: number; // 0-100
+  unitPriceMultiplier: number;
+  aiTrustScore: number;
   coldChainCertified: boolean;
   specialties: string[];
   activeContracts: number;
@@ -116,6 +123,7 @@ export interface DigitalPrescription {
   rxCode: string;
   patientName: string;
   patientId: string;
+  patientEmail?: string;
   age: number;
   doctorName: string;
   hospital: string;
