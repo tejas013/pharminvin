@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import BrandLogo from "./BrandLogo";
 import SpatialCard from "./SpatialCard";
+import CyberBackground from "./CyberBackground";
 import { AuthUser, UserRole } from "@/types/pharminvin";
 
 interface AuthPortalProps {
@@ -81,17 +82,14 @@ export default function AuthPortal({
         isDark ? "spatial-mesh-dark" : "spatial-mesh-light"
       }`}
     >
-      {/* Volumetric Background Grid + Ambient Floating Orbs + Film Grain */}
-      <div className="pointer-events-none absolute inset-0 spatial-grid opacity-80" />
-      <div className="pointer-events-none absolute inset-0 cinema-noise" />
-      <div className="pointer-events-none absolute -top-32 -left-24 h-96 w-96 rounded-full bg-cyan-500/20 blur-[120px] animate-pulse-slow" />
-      <div className="pointer-events-none absolute -bottom-32 -right-24 h-96 w-96 rounded-full bg-teal-500/20 blur-[120px] animate-pulse-slow" />
+      {/* Full Cyber-Architectural + Neural Splines + Refracted Glass Background */}
+      <CyberBackground isDark={isDark} variant="hero" />
 
       {/* Top Glass Header Strip */}
       <div className="absolute top-5 inset-x-5 sm:inset-x-8 z-20 flex items-center justify-between">
-        <div className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/60 dark:bg-slate-950/60 backdrop-blur-xl px-3.5 py-1.5 text-[11px] font-semibold text-slate-700 dark:text-cyan-200">
+        <div className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/60 dark:bg-[#050C1B]/70 backdrop-blur-xl px-4 py-1.5 text-[11px] font-semibold text-slate-700 dark:text-cyan-200">
           <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          CDSCO &amp; WHO GDP Cold-Chain Architecture · v2.6 Spatial
+          CDSCO &amp; WHO GDP Cold-Chain Architecture · Spatial OS v3.0
         </div>
 
         <button
@@ -112,17 +110,17 @@ export default function AuthPortal({
         </button>
       </div>
 
-      <div className="relative z-10 grid w-full max-w-6xl grid-cols-1 gap-10 lg:grid-cols-12 items-center pt-10 sm:pt-0">
-        {/* Left Spatial Studio Hero */}
+      <div className="relative z-10 grid w-full max-w-6xl grid-cols-1 gap-10 lg:grid-cols-12 items-center pt-12 sm:pt-0">
+        {/* Left Spatial Studio Hero with Clean Negative Space */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.65 }}
           className="lg:col-span-6 space-y-6"
         >
           <BrandLogo size={54} subtitle="NATIONAL SMART PHARMACY OS" />
 
-          <h1 className="font-display text-4xl sm:text-5xl xl:text-[54px] font-bold tracking-tight leading-[1.04] text-slate-900 dark:text-white">
+          <h1 className="font-display text-4xl sm:text-5xl xl:text-[56px] font-bold tracking-tight leading-[1.03] text-slate-900 dark:text-white">
             Zero-Waste Pharma Inventory &amp;{" "}
             <span className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">
               Cold-Chain Intelligence.
@@ -130,12 +128,15 @@ export default function AuthPortal({
           </h1>
 
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300/85 leading-relaxed max-w-xl">
-            An autonomous spatial operating system engineered for FEFO expiry
-            elimination, live IoT cryo-vault telemetry, algorithmic procurement
-            scoring, and QR-verified digital patient care.
+            Engineered with volumetric 3D digital twins, autonomous FEFO expiry
+            dispatch, live IoT cryo-vault telemetry, algorithmic procurement
+            scoring, and QR-verified patient care.
           </p>
 
-          {/* Live Micro-Metric Telemetry Strip */}
+          {/* Glowing Fiber-Optic Divider */}
+          <div className="fiber-divider max-w-md" />
+
+          {/* Tactile Feature Swatch Pills */}
           <div className="flex flex-wrap gap-2.5">
             {[
               { icon: Cpu, label: "3D Spatial Digital Twin" },
@@ -146,9 +147,9 @@ export default function AuthPortal({
               return (
                 <span
                   key={chip.label}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-1.5 text-[11px] font-semibold text-slate-700 dark:text-slate-200 backdrop-blur-md"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 dark:border-white/15 bg-white/75 dark:bg-[#081224]/75 px-3 py-1.5 text-[11px] font-semibold text-slate-700 dark:text-slate-200 backdrop-blur-xl"
                 >
-                  <Icon className="h-3.5 w-3.5 text-cyan-500" />
+                  <Icon className="h-3.5 w-3.5 text-cyan-400" />
                   {chip.label}
                 </span>
               );
@@ -159,11 +160,11 @@ export default function AuthPortal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
             <SpatialCard
               onClick={() => !loading && handleDemoLogin("admin")}
-              glowColor="rgba(6, 182, 212, 0.28)"
-              className="p-4 border-teal-500/35 dark:border-cyan-400/30 group"
+              glowColor="rgba(6, 182, 212, 0.3)"
+              className="p-4 border-teal-500/35 dark:border-cyan-400/35 group"
             >
               <div className="flex items-center justify-between">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 text-white shadow-glow-cyan">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-400 to-cyan-500 text-slate-950 shadow-glow-cyan">
                   <ShieldCheck className="h-5 w-5" />
                 </span>
                 <ArrowRight className="h-4 w-4 text-cyan-400 transition-transform group-hover:translate-x-1" />
@@ -172,18 +173,18 @@ export default function AuthPortal({
                 1-Click Admin / Pharmacist
               </div>
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-snug">
-                Full command center, 3D Twin, FEFO automation, IoT sensors &amp;
+                Full command center, 3D Twin, isometric pipeline, IoT vaults &amp;
                 procurement AI.
               </p>
             </SpatialCard>
 
             <SpatialCard
               onClick={() => !loading && handleDemoLogin("patient")}
-              glowColor="rgba(16, 185, 129, 0.28)"
+              glowColor="rgba(16, 185, 129, 0.3)"
               className="p-4 border-emerald-500/35 group"
             >
               <div className="flex items-center justify-between">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-glow-teal">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 text-slate-950 shadow-glow-teal">
                   <UserCheck className="h-5 w-5" />
                 </span>
                 <ArrowRight className="h-4 w-4 text-emerald-400 transition-transform group-hover:translate-x-1" />
@@ -203,7 +204,7 @@ export default function AuthPortal({
         <motion.div
           initial={{ opacity: 0, y: 26 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.1 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
           className="lg:col-span-6"
         >
           <div className="glass-card holo-border p-6 sm:p-8">
@@ -218,13 +219,12 @@ export default function AuthPortal({
                   Encrypted Supabase Auth · Live Instant Sync Enabled
                 </p>
               </div>
-              <span className="inline-flex items-center gap-1 rounded-full border border-cyan-500/30 bg-cyan-500/15 px-3 py-1 text-[11px] font-semibold text-teal-700 dark:text-cyan-300">
+              <span className="inline-flex items-center gap-1 rounded-full border border-cyan-500/35 bg-cyan-500/15 px-3 py-1 text-[11px] font-semibold text-teal-700 dark:text-cyan-300">
                 <Sparkles className="h-3 w-3" />
                 Studio OS
               </span>
             </div>
 
-            {/* Segmented Mode Switch */}
             <div className="grid grid-cols-2 rounded-xl bg-slate-100/90 dark:bg-slate-950/80 p-1 mb-5 border border-slate-200/70 dark:border-white/5">
               {(["login", "signup"] as const).map((tab) => (
                 <button
@@ -324,7 +324,7 @@ export default function AuthPortal({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 via-cyan-500 to-emerald-500 px-4 py-3 text-sm font-bold text-slate-950 shadow-glow-cyan transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-400 via-cyan-400 to-emerald-400 px-4 py-3 text-sm font-bold text-slate-950 shadow-glow-cyan transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
               >
                 {loading
                   ? "Initializing Spatial Engine..."
