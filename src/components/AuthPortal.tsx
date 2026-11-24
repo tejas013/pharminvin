@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
+  Activity,
   ArrowRight,
+  Cpu,
   Lock,
   Moon,
   ShieldCheck,
@@ -12,6 +14,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import BrandLogo from "./BrandLogo";
+import SpatialCard from "./SpatialCard";
 import { AuthUser, UserRole } from "@/types/pharminvin";
 
 interface AuthPortalProps {
@@ -78,13 +81,22 @@ export default function AuthPortal({
         isDark ? "spatial-mesh-dark" : "spatial-mesh-light"
       }`}
     >
-      <div className="pointer-events-none absolute inset-0 spatial-grid opacity-70" />
+      {/* Volumetric Background Grid + Ambient Floating Orbs + Film Grain */}
+      <div className="pointer-events-none absolute inset-0 spatial-grid opacity-80" />
+      <div className="pointer-events-none absolute inset-0 cinema-noise" />
+      <div className="pointer-events-none absolute -top-32 -left-24 h-96 w-96 rounded-full bg-cyan-500/20 blur-[120px] animate-pulse-slow" />
+      <div className="pointer-events-none absolute -bottom-32 -right-24 h-96 w-96 rounded-full bg-teal-500/20 blur-[120px] animate-pulse-slow" />
 
-      {/* Top Theme Toggle */}
-      <div className="absolute top-5 right-5 z-20">
+      {/* Top Glass Header Strip */}
+      <div className="absolute top-5 inset-x-5 sm:inset-x-8 z-20 flex items-center justify-between">
+        <div className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/60 dark:bg-slate-950/60 backdrop-blur-xl px-3.5 py-1.5 text-[11px] font-semibold text-slate-700 dark:text-cyan-200">
+          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+          CDSCO &amp; WHO GDP Cold-Chain Architecture · v2.6 Spatial
+        </div>
+
         <button
           onClick={onToggleTheme}
-          className="glass-card flex items-center gap-2 px-3.5 py-2 text-xs font-semibold hover:border-cyan-400/50"
+          className="ml-auto glass-card flex items-center gap-2 px-3.5 py-2 text-xs font-semibold hover:border-cyan-400/50"
         >
           {isDark ? (
             <>
@@ -100,100 +112,120 @@ export default function AuthPortal({
         </button>
       </div>
 
-      <div className="relative z-10 grid w-full max-w-5xl grid-cols-1 gap-8 lg:grid-cols-12 items-center">
-        {/* Left Spatial Showcase */}
+      <div className="relative z-10 grid w-full max-w-6xl grid-cols-1 gap-10 lg:grid-cols-12 items-center pt-10 sm:pt-0">
+        {/* Left Spatial Studio Hero */}
         <motion.div
-          initial={{ opacity: 0, x: -24 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
           className="lg:col-span-6 space-y-6"
         >
-          <BrandLogo size={52} subtitle="NATIONAL SMART PHARMACY OS" />
+          <BrandLogo size={54} subtitle="NATIONAL SMART PHARMACY OS" />
 
-          <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight leading-[1.08] text-slate-900 dark:text-white">
+          <h1 className="font-display text-4xl sm:text-5xl xl:text-[54px] font-bold tracking-tight leading-[1.04] text-slate-900 dark:text-white">
             Zero-Waste Pharma Inventory &amp;{" "}
-            <span className="bg-gradient-to-r from-teal-500 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-teal-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">
               Cold-Chain Intelligence.
             </span>
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300/90 leading-relaxed max-w-xl">
-            Automate FEFO batch dispatch, monitor IoT cryo-vault telemetry in
-            real time, optimize supplier procurement with AI trust scoring, and
-            empower patients with interactive QR digital prescriptions.
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300/85 leading-relaxed max-w-xl">
+            An autonomous spatial operating system engineered for FEFO expiry
+            elimination, live IoT cryo-vault telemetry, algorithmic procurement
+            scoring, and QR-verified digital patient care.
           </p>
 
-          {/* 1-Click Instant Demo Access Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
-            <button
-              type="button"
-              disabled={loading}
-              onClick={() => handleDemoLogin("admin")}
-              className="group glass-card glass-card-hover p-4 text-left border-teal-500/30 dark:border-cyan-400/25"
+          {/* Live Micro-Metric Telemetry Strip */}
+          <div className="flex flex-wrap gap-2.5">
+            {[
+              { icon: Cpu, label: "3D Spatial Digital Twin" },
+              { icon: Activity, label: "99.98% Cold-Chain SLA" },
+              { icon: Sparkles, label: "AI Demand & ROP Engine" },
+            ].map((chip) => {
+              const Icon = chip.icon;
+              return (
+                <span
+                  key={chip.label}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-1.5 text-[11px] font-semibold text-slate-700 dark:text-slate-200 backdrop-blur-md"
+                >
+                  <Icon className="h-3.5 w-3.5 text-cyan-500" />
+                  {chip.label}
+                </span>
+              );
+            })}
+          </div>
+
+          {/* 3D Spotlight 1-Click Instant Demo Portals */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <SpatialCard
+              onClick={() => !loading && handleDemoLogin("admin")}
+              glowColor="rgba(6, 182, 212, 0.28)"
+              className="p-4 border-teal-500/35 dark:border-cyan-400/30 group"
             >
               <div className="flex items-center justify-between">
-                <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 text-white shadow-glow-teal">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 text-white shadow-glow-cyan">
                   <ShieldCheck className="h-5 w-5" />
                 </span>
-                <ArrowRight className="h-4 w-4 text-cyan-500 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4 text-cyan-400 transition-transform group-hover:translate-x-1" />
               </div>
-              <div className="mt-3 font-display font-bold text-slate-900 dark:text-white">
+              <div className="mt-3.5 font-display text-sm font-bold text-slate-900 dark:text-white">
                 1-Click Admin / Pharmacist
               </div>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Full access to 3D Twin, FEFO Engine, Cold-Chain IoT, Procurement
-                &amp; Analytics.
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-snug">
+                Full command center, 3D Twin, FEFO automation, IoT sensors &amp;
+                procurement AI.
               </p>
-            </button>
+            </SpatialCard>
 
-            <button
-              type="button"
-              disabled={loading}
-              onClick={() => handleDemoLogin("patient")}
-              className="group glass-card glass-card-hover p-4 text-left border-emerald-500/30"
+            <SpatialCard
+              onClick={() => !loading && handleDemoLogin("patient")}
+              glowColor="rgba(16, 185, 129, 0.28)"
+              className="p-4 border-emerald-500/35 group"
             >
               <div className="flex items-center justify-between">
-                <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-glow-teal">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-glow-teal">
                   <UserCheck className="h-5 w-5" />
                 </span>
-                <ArrowRight className="h-4 w-4 text-emerald-500 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4 text-emerald-400 transition-transform group-hover:translate-x-1" />
               </div>
-              <div className="mt-3 font-display font-bold text-slate-900 dark:text-white">
+              <div className="mt-3.5 font-display text-sm font-bold text-slate-900 dark:text-white">
                 1-Click Customer / Patient
               </div>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Access QR Digital Prescriptions, dosage adherence toggles &amp;
-                safety guidance.
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-snug">
+                Interactive QR Digital Prescription, dosage adherence tracker &amp;
+                safety alerts.
               </p>
-            </button>
+            </SpatialCard>
           </div>
         </motion.div>
 
-        {/* Right Glassmorphic Auth Card */}
+        {/* Right Holographic Laser-Border Auth Monolith */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 26 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55 }}
+          transition={{ duration: 0.65, delay: 0.1 }}
           className="lg:col-span-6"
         >
-          <div className="glass-card p-6 sm:p-8 border-white/20 dark:border-white/10">
+          <div className="glass-card holo-border p-6 sm:p-8">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="font-display text-xl font-bold text-slate-900 dark:text-white">
-                  {mode === "login" ? "Authenticate Workspace" : "Create Account"}
+                  {mode === "login"
+                    ? "Authenticate Workspace"
+                    : "Provision New Access"}
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  Supabase Cloud Auth + Instant Local Persistence Enabled
+                  Encrypted Supabase Auth · Live Instant Sync Enabled
                 </p>
               </div>
-              <span className="inline-flex items-center gap-1 rounded-full bg-teal-500/15 px-2.5 py-1 text-[11px] font-semibold text-teal-600 dark:text-cyan-300">
+              <span className="inline-flex items-center gap-1 rounded-full border border-cyan-500/30 bg-cyan-500/15 px-3 py-1 text-[11px] font-semibold text-teal-700 dark:text-cyan-300">
                 <Sparkles className="h-3 w-3" />
-                Live v2.6
+                Studio OS
               </span>
             </div>
 
-            {/* Mode Switch */}
-            <div className="grid grid-cols-2 rounded-xl bg-slate-100 dark:bg-slate-950/70 p-1 mb-5">
+            {/* Segmented Mode Switch */}
+            <div className="grid grid-cols-2 rounded-xl bg-slate-100/90 dark:bg-slate-950/80 p-1 mb-5 border border-slate-200/70 dark:border-white/5">
               {(["login", "signup"] as const).map((tab) => (
                 <button
                   key={tab}
@@ -201,11 +233,11 @@ export default function AuthPortal({
                   onClick={() => setMode(tab)}
                   className={`rounded-lg py-2 text-xs font-semibold transition ${
                     mode === tab
-                      ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm"
-                      : "text-slate-500 dark:text-slate-400"
+                      ? "bg-white dark:bg-slate-800/90 text-slate-900 dark:text-white shadow-sm"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
-                  {tab === "login" ? "Sign In" : "Register"}
+                  {tab === "login" ? "Sign In" : "Register Account"}
                 </button>
               ))}
             </div>
@@ -222,14 +254,14 @@ export default function AuthPortal({
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Dr. Ananya Nair"
-                    className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-950/70 px-3.5 py-2.5 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-950/75 px-3.5 py-2.5 text-sm focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
                   />
                 </div>
               )}
 
               <div>
                 <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">
-                  Portal Role
+                  Access Role
                 </label>
                 <div className="grid grid-cols-2 gap-2.5">
                   {(
@@ -242,10 +274,10 @@ export default function AuthPortal({
                       key={item.id}
                       type="button"
                       onClick={() => setRole(item.id)}
-                      className={`rounded-xl border px-3 py-2 text-xs font-semibold transition ${
+                      className={`rounded-xl border px-3 py-2.5 text-xs font-semibold transition ${
                         role === item.id
-                          ? "border-cyan-500 bg-cyan-500/15 text-teal-700 dark:text-cyan-300"
-                          : "border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400"
+                          ? "border-cyan-400 bg-cyan-500/15 text-teal-700 dark:text-cyan-200 shadow-[0_0_20px_-6px_rgba(6,182,212,0.45)]"
+                          : "border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:border-white/25"
                       }`}
                     >
                       {item.label}
@@ -263,7 +295,7 @@ export default function AuthPortal({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-950/70 px-3.5 py-2.5 text-sm focus:border-cyan-500 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-950/75 px-3.5 py-2.5 text-sm focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
                 />
               </div>
 
@@ -277,9 +309,9 @@ export default function AuthPortal({
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-950/70 px-3.5 py-2.5 pr-10 text-sm focus:border-cyan-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-950/75 px-3.5 py-2.5 pr-10 text-sm focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
                   />
-                  <Lock className="absolute right-3 top-3 h-4 w-4 text-slate-400" />
+                  <Lock className="absolute right-3.5 top-3 h-4 w-4 text-slate-400" />
                 </div>
               </div>
 
@@ -292,13 +324,13 @@ export default function AuthPortal({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-glow-cyan transition hover:brightness-110 disabled:opacity-50"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 via-cyan-500 to-emerald-500 px-4 py-3 text-sm font-bold text-slate-950 shadow-glow-cyan transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
               >
                 {loading
-                  ? "Connecting to Pharminvin..."
+                  ? "Initializing Spatial Engine..."
                   : mode === "login"
                   ? "Launch Command Workspace"
-                  : "Create & Enter Workspace"}
+                  : "Provision & Enter Workspace"}
                 <ArrowRight className="h-4 w-4" />
               </button>
             </form>
