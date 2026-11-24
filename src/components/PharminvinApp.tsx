@@ -15,6 +15,7 @@ import {
   QrCode,
   Search,
   ShieldAlert,
+  Stethoscope,
   Sun,
   Thermometer,
   Truck,
@@ -99,7 +100,10 @@ export default function PharminvinApp() {
       const saved = localStorage.getItem(LS_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.user) setUser(parsed.user);
+        if (parsed.user) {
+          setUser(parsed.user);
+          if (parsed.user.role === "patient") setActiveTab("patient");
+        }
         if (parsed.batches) setBatches(parsed.batches);
         if (parsed.zones) setZones(parsed.zones);
         if (parsed.orders) setOrders(parsed.orders);
@@ -354,6 +358,11 @@ export default function PharminvinApp() {
     }).catch(() => null);
   };
 
+  const handleCreatePrescription = (newRx: DigitalPrescription) => {
+    setPrescriptions((prev) => [newRx, ...prev]);
+    notify(`Digital Rx ${newRx.rxCode} issued for ${newRx.patientName}.`);
+  };
+
   const matchedBatches = useMemo(() => {
     if (!cmdQuery.trim()) return batches.slice(0, 3);
     const q = cmdQuery.toLowerCase();
@@ -377,20 +386,36 @@ export default function PharminvinApp() {
     );
   }
 
+  const isClinicianOrAdmin = user.role === "admin" || user.role === "doctor";
+
   const adminNav = [
     { id: "command", label: "Command Center", icon: LayoutDashboard },
     { id: "inventory", label: "FEFO Inventory", icon: Package },
     { id: "storage", label: "Cold-Chain IoT", icon: Thermometer },
     { id: "suppliers", label: "Procurement AI", icon: Truck },
     { id: "analytics", label: "Demand Analytics", icon: BarChart3 },
-    { id: "patient", label: "Patient Portal (Preview)", icon: QrCode },
+    { id: "patient", label: "Patient Portal & Rx", icon: QrCode },
+  ];
+
+  const doctorNav = [
+    { id: "command", label: "Clinical Overview", icon: LayoutDashboard },
+    { id: "patient", label: "Issue & Manage Rx", icon: Stethoscope },
+    { id: "inventory", label: "Live Stock Lookup", icon: Package },
+    { id: "storage", label: "Cold-Chain Vaults", icon: Thermometer },
+    { id: "analytics", label: "Demand Analytics", icon: BarChart3 },
   ];
 
   const patientNav = [
     { id: "patient", label: "My Digital Rx & Dosage", icon: QrCode },
   ];
 
-  const navItems = user.role === "admin" ? adminNav : patientNav;
+  const navItems =
+    user.role === "admin"
+      ? adminNav
+      : user.role === "doctor"
+      ? doctorNav
+      : patientNav;
+
   const activeBreachCount = zones.filter((z) => z.status === "breach").length;
 
   return (
@@ -399,11 +424,10 @@ export default function PharminvinApp() {
         isDark ? "spatial-mesh-dark" : "spatial-mesh-light"
       }`}
     >
-      {/* Live Architectural Neural Spline & Refracted Glass Background */}
       <CyberBackground isDark={isDark} variant="workspace" />
 
       <div className="relative z-10 flex min-h-screen flex-col lg:flex-row">
-        {/* Spatial Glass Sidebar */}
+        {/* Spatial Glass Sidebar (Fixed Dark Opacity /85) */}
         <aside className="w-full lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-white/[0.08] bg-white/80 dark:bg-[#040914]/85 backdrop-blur-2xl p-4 sm:p-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
@@ -445,17 +469,27 @@ export default function PharminvinApp() {
             <div className="rounded-xl border border-slate-200/80 dark:border-white/[0.08] bg-slate-100/80 dark:bg-white/[0.03] p-3.5 text-xs">
               <div className="flex items-center gap-2 text-slate-900 dark:text-white font-semibold">
                 <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500/15 text-cyan-400">
-                  <User className="h-4 w-4" />
+                  {user.role === "doctor" ? (
+                    <Stethoscope className="h-4 w-4" />
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
                 </span>
-                <span className="truncate">{user.fullName}</span>
+                <div className="min-w-0">
+                  <div className="truncate">{user.fullName}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-cyan-500 font-bold">
+                    {user.role}
+                    {user.licenseId ? ` · ${user.licenseId}` : ""}
+                  </div>
+                </div>
               </div>
-              <div className="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
+              <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 truncate">
                 {user.facility}
               </div>
               <div className="mt-2.5 flex items-center justify-between text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
                 <span className="inline-flex items-center gap-1">
                   <Database className="h-3 w-3" />
-                  SYNC ACTIVE
+                  AUTH SYNCED
                 </span>
                 <span className="text-slate-400">{clock} IST</span>
               </div>
@@ -479,6 +513,8 @@ export default function PharminvinApp() {
                 <Activity className="h-3.5 w-3.5" />
                 {user.role === "admin"
                   ? "Pharminvin Spatial Command OS"
+                  : user.role === "doctor"
+                  ? "Pharminvin Doctor Clinical Portal"
                   : "Patient Care & Adherence Hub"}
               </div>
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-0.5 tracking-tight">
@@ -487,7 +523,7 @@ export default function PharminvinApp() {
             </div>
 
             <div className="flex items-center gap-2.5">
-              {user.role === "admin" && (
+              {isClinicianOrAdmin && (
                 <button
                   onClick={() => setCmdOpen(true)}
                   className="glass-card hidden md:inline-flex items-center gap-2.5 px-3.5 py-2 text-xs text-slate-500 dark:text-slate-300 hover:border-cyan-400/50"
@@ -500,7 +536,7 @@ export default function PharminvinApp() {
                 </button>
               )}
 
-              {activeBreachCount > 0 && user.role === "admin" && (
+              {activeBreachCount > 0 && isClinicianOrAdmin && (
                 <button
                   onClick={() => setActiveTab("storage")}
                   className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-bold text-white animate-pulse shadow-glow-crimson"
@@ -546,7 +582,7 @@ export default function PharminvinApp() {
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.22 }}
             >
-              {activeTab === "command" && user.role === "admin" && (
+              {activeTab === "command" && isClinicianOrAdmin && (
                 <CommandCenter
                   batches={batches}
                   zones={zones}
@@ -555,7 +591,7 @@ export default function PharminvinApp() {
                 />
               )}
 
-              {activeTab === "inventory" && user.role === "admin" && (
+              {activeTab === "inventory" && isClinicianOrAdmin && (
                 <InventoryEngine
                   batches={batches}
                   zones={zones}
@@ -564,7 +600,7 @@ export default function PharminvinApp() {
                 />
               )}
 
-              {activeTab === "storage" && user.role === "admin" && (
+              {activeTab === "storage" && isClinicianOrAdmin && (
                 <SmartStorageMonitor
                   zones={zones}
                   batches={batches}
@@ -582,7 +618,7 @@ export default function PharminvinApp() {
                 />
               )}
 
-              {activeTab === "analytics" && user.role === "admin" && (
+              {activeTab === "analytics" && isClinicianOrAdmin && (
                 <MarketAnalytics
                   batches={batches}
                   onQuickRestock={(id) =>
@@ -595,6 +631,10 @@ export default function PharminvinApp() {
                 <PatientPortal
                   prescriptions={prescriptions}
                   onToggleDosage={handleToggleDosage}
+                  onCreatePrescription={
+                    isClinicianOrAdmin ? handleCreatePrescription : undefined
+                  }
+                  currentUser={user}
                   isAdminPreview={user.role === "admin"}
                 />
               )}
